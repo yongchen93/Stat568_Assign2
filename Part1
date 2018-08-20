@@ -1,0 +1,41 @@
+/*Part 1*/
+/*(1)*/
+data dental;
+infile "C:\Users\Administrator\Desktop\GLM\dental.txt";
+    input id gender$ y1 y2 y3 y4;
+    y=y1; age=8; t=1; output;
+    y=y2; age=10; t=2; output;
+    y=y3; age=12; t=3; output;
+    y=y4; age=14; t=4; output;
+    drop y1-y4;
+run;
+
+
+proc means data = dental mean;
+    class gender age;
+    var y;
+    output out = means(drop=_type_ _freq_) mean = mean;
+run;
+
+data meanswewant;
+    set means (firstobs = 8);
+    if gender = "F" then female = mean;else
+    if gender = "M" then male = mean;
+run;
+
+
+/* Define the axis characteristics */
+axis1 label=("age");
+axis2 label=(angle=90 "mean distances");
+/* Define the symbol characteristics */
+symbol1 interpol=join value=squarefilled;
+symbol2 interpol=join value=diamondfilled;
+/* Define legend characteristics */
+legend1 label=("Gender") frame;
+/* Create the graph */
+proc gplot data=meanswewant;
+    plot (female male)*age / overlay legend=legend1
+    haxis=axis1 vaxis=axis2;
+    /* Define the title */
+    title 'Time Plot for mean distances of boys and girls';
+run;
