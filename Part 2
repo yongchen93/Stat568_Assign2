@@ -1,0 +1,15 @@
+data lead;
+    infile 'lead.txt';
+    input id y1 y2 y3 y4;
+    y=y1; time=11; t=1; output;
+    y=y2; time=1; t=2; output;
+    y=y3; time=4; t=3; output;
+    y=y4; time=6; t=4; output;
+    drop y1-y4; 
+run;
+
+proc mixed data=lead noclprint;
+    class id t time;
+    model y = time / solution chisq covb;
+    repeated t / type=un subject=id;
+run;
